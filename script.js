@@ -17,6 +17,8 @@ moves.innerHTML = numberOfMoves;
 let openCards = [];
 let matchedCards = [];
 
+let canAction = true;
+
 function startGame() {
   let shuffledDeck = shuffle(deckCards);
 
@@ -26,73 +28,73 @@ function startGame() {
     const image = document.createElement("img");
 
     image.setAttribute("src", "img/" + shuffledDeck[i]);
-    image.setAttribute("alt", "image of vault boy from fallout");
 
     card.appendChild(image);
     gameContainer.appendChild(card);
   }
   runTimer();
+  canAction = true;
 }
 
 const deckCards = [
-  "Agility.png",
-  "Agility.png",
-  "Boat.png",
-  "Boat.png",
-  "Citizenship.png",
-  "Citizenship.png",
-  "Hack.png",
-  "Hack.png",
-  "Nerd-Rage.png",
-  "Nerd-Rage.png",
-  "Nuka-Cola.png",
-  "Nuka-Cola.png",
-  "Robotics.png",
-  "Robotics.png",
-  "Shock.png",
-  "Shock.png",
+  "BugsBunny.png",
+  "BugsBunny.png",
+  "Coyote.png",
+  "Coyote.png",
+  "DaffyDuck.png",
+  "DaffyDuck.png",
+  "Martian.png",
+  "Martian.png",
+  "Pepe.png",
+  "Pepe.png",
+  "RoadRunner.png",
+  "RoadRunner.png",
+  "Speedy.png",
+  "Speedy.png",
+  "Tweety.png",
+  "Tweety.png",
 ];
 
 gameContainer.addEventListener("click", function (e) {
-  console.log(e.target);
-  console.log(e.target.firstElementChild);
-  console.log(e.target.firstElementChild.src);
-  if (e.target.className === "card") {
-    // To console if I was clicking the correct element
-    console.log(e.target + " Was clicked");
-    // Start the timer after the first click of one card
-    // Executes the timer() function
-    // if (timeStart === false) {
-    //   timeStart = true;
-    //   timer();
-    // }
-    // Call flipCard() function
-    flipCard();
-  }
-  //Flip the card and display cards img
-  function flipCard() {
-    // When <li> is clicked add the class .flip to show img
-    e.target.classList.add("flip");
-    // Call addToOpened() function
-    // addToOpened();
-    addCard();
-  }
-
-  function addCard() {
-    if (openCards.length == 0 || openCards.length == 1) {
-      openCards.push(e.target.firstElementChild);
+  if (canAction) {
+    if (e.target.className === "card") {
+      // To console if I was clicking the correct element
+      console.log(e.target + " Was clicked");
+      // Start the timer after the first click of one card
+      // Executes the timer() function
+      // if (timeStart === false) {
+      //   timeStart = true;
+      //   timer();
+      // }
+      // Call flipCard() function
+      flipCard();
     }
-    console.log(openCards);
-    console.log(openCards[0]);
-    console.log(openCards[0].src);
-    console.log(openCards[1].src);
+    //Flip the card and display cards img
+    function flipCard() {
+      // When <li> is clicked add the class .flip to show img
+      e.target.classList.add("flip");
+      // Call addToOpened() function
+      // addToOpened();
+      addCard();
+    }
 
-    compareCards();
+    function addCard() {
+      if (openCards.length == 0 || openCards.length == 1) {
+        openCards.push(e.target.firstElementChild);
+      }
+      console.log(openCards);
+      console.log(openCards[0]);
+      console.log(openCards[0].src);
+      console.log(openCards[1].src);
+
+      compareCards();
+    }
   }
 });
 
 function compareCards() {
   if (openCards.length == 2) {
+    canAction = false;
     document.body.style.pointerEvents = "none";
   }
 
@@ -117,14 +119,16 @@ function cardsMatched() {
     openCards[1].parentElement.classList.add("match");
     // Push the matched cards to the matched array
     matchedCards.push(...openCards);
-    // Allow for further mouse clicks on cards
-    document.body.style.pointerEvents = "auto";
+
     // Check to see if the game has been won with all 8 pairs
     // winGame();
     gameWon();
+    // Allow for further mouse clicks on cards
+    document.body.style.pointerEvents = "auto";
+    canAction = true;
     // Clear the opened array
     openCards = [];
-  }, 500);
+  }, 750);
   // Call movesCounter to increment by one
   countMoves();
   console.log(matchedCards);
@@ -137,9 +141,10 @@ function cardsNotMatched() {
     openCards[1].parentElement.classList.remove("flip");
     // Allow further mouse clicks on cards
     document.body.style.pointerEvents = "auto";
+    canAction = true;
     // Remove the cards from opened array
     openCards = [];
-  }, 500);
+  }, 750);
   // Call movesCounter to increment by one
   countMoves();
 }
@@ -147,6 +152,7 @@ function cardsNotMatched() {
 function gameWon() {
   if (matchedCards.length == 16) {
     stopTimer();
+    showStats();
     showModal();
   }
 }
@@ -169,14 +175,26 @@ function showModal() {
   };
 }
 
+function showStats() {
+  const modalContent = document.querySelector(".modal-content");
+  const message = document.querySelector(".message");
+  message.innerHTML = `<p>You finished the game in ${
+    minutes > 1 ? `${minutes} minutes` : `${minutes} minute`
+  } and ${
+    seconds > 1 ? `${seconds} seconds` : `${seconds} second`
+  }! <br> You needed ${numberOfMoves} moves to complete the game. </p>`;
+  // modalContent.appendChild(message);
+  console.log(message);
+}
+
 function resetEverything() {
   // Stop time, reset the minutes and seconds update the time inner HTML
   modal.style.display = "none";
   stopTimer();
   timer.innerHTML = `00:00`;
   // timeStart = false;
-  // seconds = 0;
-  // minutes = 0;
+  seconds = 0;
+  minutes = 0;
   // timeCounter.innerHTML =
   //   "<i class='fa fa-hourglass-start'></i>" + " Timer: 00:00";
   // Reset star count and the add the class back to show stars again
@@ -187,12 +205,12 @@ function resetEverything() {
   numberOfMoves = 0;
   moves.innerHTML = numberOfMoves;
   // Clear both arrays that hold the opened and matched cards
-  matched = [];
-  opened = [];
+  matchedCards = [];
+  openCards = [];
   // Clear the deck
   removeCard();
   // Create a new deck
-  startGame();
+  // startGame();
 }
 
 function shuffle(array) {
@@ -230,8 +248,8 @@ function runTimer() {
 
 function stopTimer() {
   // timer.innerHTML = `00:00`;
-  seconds = 0;
-  minutes = 0;
+  // seconds = 0;
+  // minutes = 0;
   clearInterval(time);
 }
 
@@ -239,8 +257,6 @@ playBtn.addEventListener("click", () => {
   introScreen.classList.remove("fadeIn");
   introScreen.classList.add("fadeOut");
   game.classList.add("fadeIn");
-  matchedCards = [];
-  openCards = [];
   startGame();
 });
 

@@ -18,14 +18,18 @@
     <header>
       <h1 class="title">Memorama</h1>
     </header>
-    <div class="intro"><button class="btn">PLAY!</button></div>
+    <div class="intro">
+      <button class="btn">LOONEY TUNES!</button>
+      <button class="btn">PLAY!</button>
+      <button class="btn">PLAY!</button>
+    </div>
     <div class="game fadeOut">
       <div class="stats">
         <h2 class="timer">Time: <span>00:00</span></h2>
         <h2 class="moves">Moves: <span></span></h2>
       </div>
       <section id="gameContainer"></section>
-
+      <button class="btn btnMain restartBtn">Restart</button>
       <!-- Modal section-->
       <section class="win-game-modal">
         <div id="modal" class="modal">
@@ -33,7 +37,9 @@
           <div class="modal-content">
             <span class="closeBtn">&times;</span>
             <h2>Congratulations!</h2>
-            <p>You have won the game and found all 8 pairs of cards.</p>
+            <p class="message">
+              You have won the game and found all 8 pairs of cards.
+            </p>
             <img
               class="modal-img"
               src="img/Vault-Boy-Thumb-Up.jpg"
@@ -44,7 +50,6 @@
         </div>
       </section>
       <!-- Modal section-->
-      <button class="btn restartBtn">Restart</button>
     </div>
     <script src="script.js"></script>
   </body>
