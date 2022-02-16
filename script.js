@@ -1,10 +1,12 @@
-const playBtn = document.querySelector(".intro button");
+const playBtnLooneyTunes = document.querySelector(".btnLooneyTunes");
+const playBtnDisney = document.querySelector(".btnDisney");
+const playBtnFlags = document.querySelector(".btnFlags");
+
 const restartBtn = document.querySelectorAll(".restartBtn");
-console.log(restartBtn);
 const introScreen = document.querySelector(".intro");
 const game = document.querySelector(".game");
-
 const gameContainer = document.querySelector("#gameContainer");
+const modal = document.querySelector(".modal");
 
 const timer = document.querySelector(".timer span");
 const moves = document.querySelector(".moves span");
@@ -14,19 +16,19 @@ let time,
 let numberOfMoves = 0;
 moves.innerHTML = numberOfMoves;
 
-let openCards = [];
+let openedCards = [];
 let matchedCards = [];
 
 let canAction = true;
 
-function startGame() {
-  let shuffledDeck = shuffle(deckCards);
+function startGameLooneyTunes() {
+  let shuffledDeck = shuffle(deckCardsLooneyTunes);
 
   for (let i = 0; i < shuffledDeck.length; i++) {
     const card = document.createElement("div");
     card.classList.add("card");
-    const image = document.createElement("img");
 
+    const image = document.createElement("img");
     image.setAttribute("src", "img/" + shuffledDeck[i]);
 
     card.appendChild(image);
@@ -36,7 +38,53 @@ function startGame() {
   canAction = true;
 }
 
-const deckCards = [
+function startGameDisney() {
+  let shuffledDeck = shuffle(deckCardsDisney);
+
+  for (let i = 0; i < shuffledDeck.length; i++) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    const image = document.createElement("img");
+    image.setAttribute("src", "img/" + shuffledDeck[i]);
+
+    card.appendChild(image);
+    gameContainer.appendChild(card);
+  }
+  runTimer();
+  canAction = true;
+}
+
+function startGameFlags() {
+  let deckFlagsCopy = deckFlags.slice();
+  let selectedFlags = [];
+
+  for (let i = 0; i < 8; i++) {
+    let randomFlag = deckFlagsCopy.splice(
+      Math.floor(Math.random() * deckFlagsCopy.length),
+      1
+    );
+    selectedFlags.push(randomFlag);
+    selectedFlags.push(randomFlag);
+  }
+
+  let shuffledDeck = shuffle(selectedFlags);
+
+  for (let i = 0; i < shuffledDeck.length; i++) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    const image = document.createElement("img");
+    image.setAttribute("src", "img/" + shuffledDeck[i]);
+
+    card.appendChild(image);
+    gameContainer.appendChild(card);
+  }
+  runTimer();
+  canAction = true;
+}
+
+const deckCardsLooneyTunes = [
   "BugsBunny.png",
   "BugsBunny.png",
   "Coyote.png",
@@ -54,38 +102,68 @@ const deckCards = [
   "Tweety.png",
   "Tweety.png",
 ];
+const deckCardsDisney = [
+  "DonaldDuck.png",
+  "DonaldDuck.png",
+  "Goofy.png",
+  "Goofy.png",
+  "Magica.png",
+  "Magica.png",
+  "Mcquack.png",
+  "Mcquack.png",
+  "MickeyMouse.png",
+  "MickeyMouse.png",
+  "MinnieMouse.png",
+  "MinnieMouse.png",
+  "Pluto.png",
+  "Pluto.png",
+  "Scrooge.png",
+  "Scrooge.png",
+];
+const deckFlags = [
+  "Argentina.png",
+  "Austria.png",
+  "Bolivia.png",
+  "Botswana.png",
+  "Colombia.png",
+  "Ecuador.png",
+  "Estonia.png",
+  "Finland.png",
+  "Japan.png",
+  "Kenya.png",
+  "Latvia.png",
+  "Mexico.png",
+  "Namibia.png",
+  "Netherlands.png",
+  "NewZealand.png",
+  "Norway.png",
+  "Panama.png",
+  "Russia.png",
+  "SolomonIslands.png",
+  "SouthAfrica.png",
+  "Sweden.png",
+  "Tunisia.png",
+  "Turkey.png",
+  "Uganda.png",
+  "Uruguay.png",
+  "Venezuela.png",
+];
 
 gameContainer.addEventListener("click", function (e) {
   if (canAction) {
     if (e.target.className === "card") {
-      // To console if I was clicking the correct element
-      console.log(e.target + " Was clicked");
-      // Start the timer after the first click of one card
-      // Executes the timer() function
-      // if (timeStart === false) {
-      //   timeStart = true;
-      //   timer();
-      // }
-      // Call flipCard() function
       flipCard();
     }
-    //Flip the card and display cards img
+
     function flipCard() {
-      // When <li> is clicked add the class .flip to show img
       e.target.classList.add("flip");
-      // Call addToOpened() function
-      // addToOpened();
       addCard();
     }
 
     function addCard() {
-      if (openCards.length == 0 || openCards.length == 1) {
-        openCards.push(e.target.firstElementChild);
+      if (openedCards.length == 0 || openedCards.length == 1) {
+        openedCards.push(e.target.firstElementChild);
       }
-      console.log(openCards);
-      console.log(openCards[0]);
-      console.log(openCards[0].src);
-      console.log(openCards[1].src);
 
       compareCards();
     }
@@ -93,60 +171,51 @@ gameContainer.addEventListener("click", function (e) {
 });
 
 function compareCards() {
-  if (openCards.length == 2) {
+  if (openedCards.length == 2) {
     canAction = false;
-    document.body.style.pointerEvents = "none";
+    // document.body.style.pointerEvents = "none";
   }
 
-  if (openCards[0].src == openCards[1].src && openCards.length == 2) {
-    console.log("it is match");
+  if (openedCards[0].src == openedCards[1].src && openedCards.length == 2) {
     cardsMatched();
-  } else if (openCards[0].src !== openCards[1].src && openCards.length == 2) {
-    console.log("it is not matched");
+  } else if (
+    openedCards[0].src !== openedCards[1].src &&
+    openedCards.length == 2
+  ) {
     cardsNotMatched();
   }
 }
 
-function countMoves() {
-  numberOfMoves++;
-  console.log(numberOfMoves);
-  moves.innerHTML = numberOfMoves;
-}
-
 function cardsMatched() {
   setTimeout(function () {
-    openCards[0].parentElement.classList.add("match");
-    openCards[1].parentElement.classList.add("match");
-    // Push the matched cards to the matched array
-    matchedCards.push(...openCards);
+    openedCards[0].parentElement.classList.add("match");
+    openedCards[1].parentElement.classList.add("match");
+    matchedCards.push(...openedCards);
 
-    // Check to see if the game has been won with all 8 pairs
-    // winGame();
     gameWon();
-    // Allow for further mouse clicks on cards
-    document.body.style.pointerEvents = "auto";
+    // document.body.style.pointerEvents = "auto";
     canAction = true;
-    // Clear the opened array
-    openCards = [];
+
+    openedCards = [];
   }, 750);
-  // Call movesCounter to increment by one
   countMoves();
-  console.log(matchedCards);
 }
 
 function cardsNotMatched() {
   setTimeout(function () {
-    // Remove class flip on images parent element
-    openCards[0].parentElement.classList.remove("flip");
-    openCards[1].parentElement.classList.remove("flip");
-    // Allow further mouse clicks on cards
-    document.body.style.pointerEvents = "auto";
+    openedCards[0].parentElement.classList.remove("flip");
+    openedCards[1].parentElement.classList.remove("flip");
+    // document.body.style.pointerEvents = "auto";
     canAction = true;
-    // Remove the cards from opened array
-    openCards = [];
+
+    openedCards = [];
   }, 750);
-  // Call movesCounter to increment by one
   countMoves();
+}
+
+function countMoves() {
+  numberOfMoves++;
+  moves.innerHTML = numberOfMoves;
 }
 
 function gameWon() {
@@ -156,19 +225,16 @@ function gameWon() {
     showModal();
   }
 }
-const modal = document.querySelector(".modal");
+
 function showModal() {
-  // Access the modal <span> element (x) that closes the modal
   const closeModal = document.querySelector(".closeBtn");
-  // When the game is won set modal to display block to show it
+
   modal.style.display = "block";
-  // When the user clicks on <span> (x), close the modal
+
   closeModal.addEventListener("click", () => {
     modal.style.display = "none";
   });
-  // When the user clicks anywhere outside of the modal, close it
   window.onclick = function (event) {
-    console.log(event.target);
     if (event.target == modal) {
       modal.style.display = "none";
     }
@@ -182,55 +248,20 @@ function showStats() {
     minutes > 1 ? `${minutes} minutes` : `${minutes} minute`
   } and ${
     seconds > 1 ? `${seconds} seconds` : `${seconds} second`
-  }! <br> You needed ${numberOfMoves} moves to complete the game. </p>`;
-  // modalContent.appendChild(message);
-  console.log(message);
+  }! <br> You needed ${numberOfMoves} moves to complete the game! </p>`;
 }
 
 function resetEverything() {
-  // Stop time, reset the minutes and seconds update the time inner HTML
   modal.style.display = "none";
   stopTimer();
   timer.innerHTML = `00:00`;
-  // timeStart = false;
   seconds = 0;
   minutes = 0;
-  // timeCounter.innerHTML =
-  //   "<i class='fa fa-hourglass-start'></i>" + " Timer: 00:00";
-  // Reset star count and the add the class back to show stars again
-  // star[1].firstElementChild.classList.add("fa-star");
-  // star[2].firstElementChild.classList.add("fa-star");
-  // starCount = 3;
-  // Reset moves count and reset its inner HTML
   numberOfMoves = 0;
   moves.innerHTML = numberOfMoves;
-  // Clear both arrays that hold the opened and matched cards
+
   matchedCards = [];
-  openCards = [];
-  // Clear the deck
-  removeCard();
-  // Create a new deck
-  // startGame();
-}
-
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
+  openedCards = [];
 }
 
 function runTimer() {
@@ -247,17 +278,45 @@ function runTimer() {
 }
 
 function stopTimer() {
-  // timer.innerHTML = `00:00`;
-  // seconds = 0;
-  // minutes = 0;
   clearInterval(time);
 }
 
-playBtn.addEventListener("click", () => {
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
+playBtnLooneyTunes.addEventListener("click", () => {
   introScreen.classList.remove("fadeIn");
   introScreen.classList.add("fadeOut");
   game.classList.add("fadeIn");
-  startGame();
+  startGameLooneyTunes();
+});
+
+playBtnDisney.addEventListener("click", () => {
+  introScreen.classList.remove("fadeIn");
+  introScreen.classList.add("fadeOut");
+  game.classList.add("fadeIn");
+  startGameDisney();
+});
+
+playBtnFlags.addEventListener("click", () => {
+  introScreen.classList.remove("fadeIn");
+  introScreen.classList.add("fadeOut");
+  game.classList.add("fadeIn");
+  startGameFlags();
 });
 
 restartBtn[0].addEventListener("click", () => {
@@ -266,6 +325,7 @@ restartBtn[0].addEventListener("click", () => {
   gameContainer.innerHTML = "";
   resetEverything();
 });
+
 restartBtn[1].addEventListener("click", () => {
   game.classList.remove("fadeIn");
   introScreen.classList.add("fadeIn");
