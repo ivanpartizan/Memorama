@@ -245,8 +245,12 @@ function showStats() {
   const modalContent = document.querySelector(".modal-content");
   const message = document.querySelector(".message");
   message.innerHTML = `<p>You finished the game in ${
-    minutes > 1 ? `${minutes} minutes` : `${minutes} minute`
-  } and ${
+    minutes > 1
+      ? `${minutes} minutes and`
+      : minutes == 1
+      ? `${minutes} minute and`
+      : ``
+  } ${
     seconds > 1 ? `${seconds} seconds` : `${seconds} second`
   }! <br> You needed ${numberOfMoves} moves to complete the game! </p>`;
 }
